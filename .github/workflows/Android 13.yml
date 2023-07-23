@@ -3,37 +3,48 @@ name: Android-13-Deployment
 on:
   workflow_dispatch:
 
+permissions:
+  actions: write
+  checks: write
+  contents: write
+  deployments: write
+  issues: write
+  packages: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: write
+
 env:
   ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
   USER_NAME: ${{ secrets.USER_NAME }}
   EMAIL: ${{ secrets.EMAIL }}
   SF_PWD: ${{ secrets.SF_PWD }}
   RELEASE_TYPE: 'stable'
-  ENVIRONMENT_TYPE: ${{ secrets.ENVIRONMENT_TYPE }}
-  PACKAGE_LIST: core,basic,omni,stock,full,go,addonsets,addons
+  ENVIRONMENT_TYPE: production
+  PACKAGE_LIST: stock
+  UPLOAD_RELEASE: true
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
        - name: Checkout
          uses: actions/checkout@main
 
-       - name: Setup SSH Keys and known_hosts 
-         uses: webfactory/ssh-agent@v0.4.1
-         with:
-             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+       - name: Https
+         run: |
+            git config --global url."https://github.com/".insteadOf git@github.com:
+ 
        - name: Environment Details and clean up
          run: |
+            sudo apt install default-jre adb aapt -y
             ls -R
             rm -rf build 10 11 12 12.1 13 Build Releases canary-release release nikgapps.github.io TempPackages overlays_SL overlays_T
        - name: Initialization and Fetching the Source Code
          run: |
-            git config --global user.name "$USER_NAME"
-            git config --global user.email "$EMAIL"
             git clone git@github.com:nikgapps/build.git
-            git clone git@github.com:nikgapps/overlays_T.git
        - name: Installing Requirements
          run: |
             python3 -m pip install wheel setuptools testresources
@@ -44,8 +55,18 @@ jobs:
          run: |
            git config --global http.postBuffer 157286400
 
-       - name: Building Android T Gapps
+       - name: Building Android 13 Gapps
          run: |
+            rm -rf 10 11 12 12.1 13 Releases canary-release release nikgapps.github.io TempPackages overlays_SL overlays_T
             cd build
             python3 run.py -A 13 -P $PACKAGE_LIST -G -F
             cd ..
+       - name: Upload gapps A13
+         uses: softprops/action-gh-release@v1
+         if: steps.tag5.outputs.status == 'success' && !cancelled()
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+           tag_name: ${{ steps.tag5.outputs.release_tag }}
+           body_path: release.txt
+           files: /home/runner/work/deploy/deploy/Releases/13/*

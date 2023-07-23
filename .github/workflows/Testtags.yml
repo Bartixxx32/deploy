@@ -1,0 +1,135 @@
+name: testtags
+
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  checks: write
+  contents: write
+  deployments: write
+  issues: write
+  packages: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: write
+
+env:
+  RELEASE_TYPE: 'stable'
+  ENVIRONMENT_TYPE: production
+  PACKAGE_LIST: core
+  UPLOAD_RELEASE: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+       - name: Checkout
+         uses: actions/checkout@main
+
+       - name: Https
+         run: |
+            echo siema >> siema.txt
+       - name: Remove old Releases
+         uses: dev-drprasad/delete-older-releases@v0.1.0
+         if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+         with:
+           keep_latest: 0
+           delete_tags: true
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
+       - name: Generate release tag A10
+         id: tag1
+         if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+         run: |
+           echo "::set-output name=release_tag::Android-10-$(date +"%Y.%m.%d-%H%M")"
+           touch release.txt
+           echo Test >> release.txt
+           echo "::set-output name=status::success"
+       - name: Generate release tag A11
+         id: tag2
+         if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+         run: |
+           echo "::set-output name=release_tag::Android-11-$(date +"%Y.%m.%d-%H%M")"
+           touch release.txt
+           echo Test >> release.txt
+           echo "::set-output name=status::success"
+       - name: Generate release tag A12
+         id: tag3
+         if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+         run: |
+           echo "::set-output name=release_tag::Android-12-$(date +"%Y.%m.%d-%H%M")"
+           touch release.txt
+           echo Test >> release.txt
+           echo "::set-output name=status::success"
+       - name: Generate release tag A12.1
+         id: tag4
+         if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+         run: |
+           echo "::set-output name=release_tag::Android-12.1-$(date +"%Y.%m.%d-%H%M")"
+           touch release.txt
+           echo Test >> release.txt
+           echo "::set-output name=status::success"
+           
+       - name: Generate release tag A13
+         id: tag5
+         if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+         run: |
+           echo "::set-output name=release_tag::Android-13-$(date +"%Y.%m.%d-%H%M")"
+           touch release.txt
+           echo Test >> release.txt
+           echo "::set-output name=status::success"
+           
+       - name: Upload gapps A10
+         uses: softprops/action-gh-release@v1
+         if: steps.tag1.outputs.status == 'success' && !cancelled()
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+           tag_name: ${{ steps.tag1.outputs.release_tag }}
+           body_path: release.txt
+           files: /home/runner/work/deploy/deploy/siema.txt
+       
+       - name: Upload gapps A11
+         uses: softprops/action-gh-release@v1
+         if: steps.tag2.outputs.status == 'success' && !cancelled()
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+           tag_name: ${{ steps.tag2.outputs.release_tag }}
+           body_path: release.txt
+           files: /home/runner/work/deploy/deploy/siema.txt
+       
+       - name: Upload gapps A12
+         uses: softprops/action-gh-release@v1
+         if: steps.tag3.outputs.status == 'success' && !cancelled()
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+           tag_name: ${{ steps.tag3.outputs.release_tag }}
+           body_path: release.txt
+           files: /home/runner/work/deploy/deploy/siema.txt
+           
+       - name: Upload gapps A12.1
+         uses: softprops/action-gh-release@v1
+         if: steps.tag4.outputs.status == 'success' && !cancelled()
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+           tag_name: ${{ steps.tag4.outputs.release_tag }}
+           body_path: release.txt
+           files: /home/runner/work/deploy/deploy/siema.txt
+           
+       - name: Upload gapps A13
+         uses: softprops/action-gh-release@v1
+         if: steps.tag5.outputs.status == 'success' && !cancelled()
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+           tag_name: ${{ steps.tag5.outputs.release_tag }}
+           body_path: release.txt
+           files: /home/runner/work/deploy/deploy/siema.txt
+           
+       

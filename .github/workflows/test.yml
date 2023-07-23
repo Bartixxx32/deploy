@@ -1,18 +1,17 @@
-name: Test OEM Deployment
+name: Test SSH
 
 on:
+#   push:
+#       branches: [main]
   workflow_dispatch:
 
 env:
   ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-  REPOSITORY: ${{ secrets.REPOSITORY }}
   USER_NAME: ${{ secrets.USER_NAME }}
   EMAIL: ${{ secrets.EMAIL }}
-  SOURCE: ${{ secrets.SOURCE }}
   SF_PWD: ${{ secrets.SF_PWD }}
   RELEASE_TYPE: 'stable'
   ENVIRONMENT_TYPE: ${{ secrets.ENVIRONMENT_TYPE }}
-  PACKAGE_LIST: core
 
 jobs:
   build:
@@ -22,38 +21,33 @@ jobs:
        - name: Checkout
          uses: actions/checkout@main
 
-       - name: Setup SSH Keys and known_hosts for github
+       - name: Setup SSH Keys and known_hosts 
          uses: webfactory/ssh-agent@v0.4.1
          with:
-             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-             
-       - name: Setup SSH Keys for gitlab.com
+             ssh-private-key: |
+                ${{ secrets.SSH_PRIVATE_KEY }}
+                
+       - name: Setup SSH Keys and known_hosts using kielabokkie
          uses: kielabokkie/ssh-key-and-known-hosts-action@v1
          with:
-             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-             ssh-host: gitlab.com
-            
-       - name: Installing Requirements
-         run: |
-            python3 -m pip install wheel setuptools testresources
-        
-       - name: Setup Git Repository
-         run: |
-            git clone git@github.com:nikgapps/updater.git
-            cd updater
-            pip3 install -r requirements.txt
-            cd ..
-            
-       - name: Update Git configs
-         run: |
-            git config --global user.name "$USER_NAME"
-            git config --global user.email "$EMAIL"
-            git config --global http.postBuffer 157286400
+           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+           ssh-host: gitlab.com
 
-       - name: Syncing OEM updates and extract overlays
+       - name: Environment Details and clean up
          run: |
-            cd updater
-            python3 main.py
-            python3 overlays.py
-            cd ..
+            ls -R
+            rm -rf build
+            cat /Users/runner/.ssh/known_hosts
+       - name: Initialization and Fetching the Source Code
+         run: |
+            git config --global user.name "Nikhil Menghani"
+            git config --global user.email "nikhil@menghani.com"
+            git clone git@github.com:nikgapps/my.git
+            git clone git@gitlab.com:nikgapps/13.git
+# git clone git@gitlab.com:nikgapps/13.git git clone git@gitlab.com:nikgapps/test.git
+            
+       - name: Environment Details and clean up again
+         run: |
+            ls -R
+            rm -rf build
        
