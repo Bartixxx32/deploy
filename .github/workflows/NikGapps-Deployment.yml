@@ -10,10 +10,6 @@ env:
 jobs:
   build:
     runs-on: self-hosted
-    container:
-      image: node:latest
-      options: --cpus 4
-
     strategy:
       matrix:
         android_version:
