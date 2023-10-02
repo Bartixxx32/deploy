@@ -10,6 +10,9 @@ env:
 jobs:
   build:
     runs-on: self-hosted
+    container:
+      image: python3
+      options: --cpus 4
 
     strategy:
       matrix:
