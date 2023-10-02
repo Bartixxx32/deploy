@@ -34,6 +34,12 @@ jobs:
         run: |
           git config --global http.postBuffer 157286400
 
+      - name: Archive Setup
+        uses: actions/upload-artifact@v2
+        with:
+          name: setup-artifact
+          path: NikGappsProject
+
   build:
     needs: setup
     runs-on: macos-latest
@@ -47,6 +53,11 @@ jobs:
           - '13'
 
     steps:
+      - name: Download Setup Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: setup-artifact
+
       - name: Building Android Gapps
         run: |
           cd NikGappsProject
