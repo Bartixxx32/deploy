@@ -20,10 +20,13 @@ jobs:
           - '13'
 
     steps:
-          
       - name: Checkout
         uses: actions/checkout@main
-
+        
+      - name: Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
       - name: Environment Details and clean up
         run: |
           rm -rf $REPOSITORY 10 11 12 12.1 13 Build Releases canary-release release nikgapps.github.io TempPackages
