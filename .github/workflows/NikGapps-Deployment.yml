@@ -8,16 +8,8 @@ env:
   PACKAGE_LIST: core
 
 jobs:
-  build:
+  setup:
     runs-on: macos-latest
-
-    strategy:
-      matrix:
-        android_version:
-          - '10'
-          - '11'
-          - '12.1'
-          - '13'
 
     steps:
       - name: Checkout
@@ -42,6 +34,19 @@ jobs:
         run: |
           git config --global http.postBuffer 157286400
 
+  build:
+    needs: setup
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        android_version:
+          - '10'
+          - '11'
+          - '12.1'
+          - '13'
+
+    steps:
       - name: Building Android Gapps
         run: |
           cd NikGappsProject
