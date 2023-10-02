@@ -2,8 +2,6 @@ name: NikGapps-Deployment
 
 on:
   workflow_dispatch:
-#   schedule:
-#     - cron: '0 0 * * *' 
 
 env:
   RELEASE_TYPE: 'stable'
@@ -13,44 +11,39 @@ jobs:
   build:
     runs-on: macos-latest
 
-    steps:
-       - name: Checkout
-         uses: actions/checkout@main
+    strategy:
+      matrix:
+        android_version:
+          - '10'
+          - '11'
+          - '12.1'
+          - '13'
 
-             
-            
-       - name: Environment Details and clean up
-         run: |
-           rm -rf $REPOSITORY 10 11 12 12.1 13 Build Releases canary-release release nikgapps.github.io TempPackages
-       - name: Initialization and Fetching the Source Code
-         run: |
-            git config --global user.name "test"
-            git config --global user.email "test@test.com"
-       - name: Installing Requirements
-         run: |
-            python3 -m pip install wheel setuptools testresources
-            python3 -m pip install NikGapps
-            mkdir NikGappsProject
-       - name: Update Git configs
-         run: |
-           git config --global http.postBuffer 157286400
-       - name: Building Android 10 Gapps
-         run: |
-            cd NikGappsProject
-            nikgapps --sign --release --androidVersion 10 --packageList $PACKAGE_LIST
-            cd ..
-       - name: Building Android 11 Gapps
-         run: |
-            cd NikGappsProject
-            nikgapps --sign --release --androidVersion 11 --packageList $PACKAGE_LIST
-            cd ..
-       - name: Building Android 12L Gapps
-         run: |
-            cd NikGappsProject
-            nikgapps --sign --release --androidVersion 12.1 --packageList $PACKAGE_LIST
-            cd ..
-       - name: Building Android 13 Gapps
-         run: |
-            cd NikGappsProject
-            nikgapps --sign --release --androidVersion 13 --packageList $PACKAGE_LIST
-            cd ..
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Environment Details and clean up
+        run: |
+          rm -rf $REPOSITORY 10 11 12 12.1 13 Build Releases canary-release release nikgapps.github.io TempPackages
+
+      - name: Initialization and Fetching the Source Code
+        run: |
+          git config --global user.name "test"
+          git config --global user.email "test@test.com"
+
+      - name: Installing Requirements
+        run: |
+          python3 -m pip install wheel setuptools testresources
+          python3 -m pip install NikGapps
+          mkdir NikGappsProject
+
+      - name: Update Git configs
+        run: |
+          git config --global http.postBuffer 157286400
+
+      - name: Building Android Gapps
+        run: |
+          cd NikGappsProject
+          nikgapps --sign --release --androidVersion ${{ matrix.android_version }} --packageList $PACKAGE_LIST
+          cd ..
