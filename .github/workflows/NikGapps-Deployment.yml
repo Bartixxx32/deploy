@@ -8,8 +8,16 @@ env:
   PACKAGE_LIST: core
 
 jobs:
-  setup:
+  build:
     runs-on: macos-latest
+
+    strategy:
+      matrix:
+        android_version:
+          - '10'
+          - '11'
+          - '12.1'
+          - '13'
 
     steps:
       - name: Checkout
@@ -33,30 +41,6 @@ jobs:
       - name: Update Git configs
         run: |
           git config --global http.postBuffer 157286400
-
-      - name: Archive Setup
-        uses: actions/upload-artifact@v2
-        with:
-          name: setup-artifact
-          path: .
-
-  build:
-    needs: setup
-    runs-on: macos-latest
-
-    strategy:
-      matrix:
-        android_version:
-          - '10'
-          - '11'
-          - '12.1'
-          - '13'
-
-    steps:
-      - name: Download Setup Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: setup-artifact
 
       - name: Building Android Gapps
         run: |
