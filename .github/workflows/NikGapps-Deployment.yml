@@ -34,10 +34,12 @@ jobs:
           python3 -m pip install wheel setuptools testresources
           python3 -m pip install NikGapps
           mkdir NikGappsProject
-          # Archive the installed packages and NikGappsProject
-          tar -czf workspace.tar.gz $HOME
-          # Persist the workspace
+
+      - name: Archive home directory
+        run: |
+          tar -czf workspace.tar.gz -C $HOME .
           mv workspace.tar.gz $HOME/
+          
       - name: Upload workspace
         uses: actions/upload-artifact@v2
         with:
