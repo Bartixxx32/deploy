@@ -9,7 +9,7 @@ env:
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: macos-latest
 
     strategy:
       matrix:
@@ -20,10 +20,6 @@ jobs:
           - '13'
 
     steps:
-      - name: Set Swap
-        uses: get-bridge/swap-space-action@v1
-        with:
-          swap-size-mb: 8192
           
       - name: Checkout
         uses: actions/checkout@main
