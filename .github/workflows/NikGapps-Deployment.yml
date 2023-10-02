@@ -35,7 +35,7 @@ jobs:
           python3 -m pip install NikGapps
           mkdir NikGappsProject
           # Archive the installed packages and NikGappsProject
-          tar -czf workspace.tar.gz NikGappsProject $(python3 -m site --user-site)
+          tar -czf workspace.tar.gz $HOME
           # Persist the workspace
           mv workspace.tar.gz $HOME/
       - name: Upload workspace
