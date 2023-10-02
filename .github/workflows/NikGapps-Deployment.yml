@@ -9,7 +9,7 @@ env:
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: self-hosted
 
     strategy:
       matrix:
@@ -37,6 +37,7 @@ jobs:
         run: |
           python3 -m pip install wheel setuptools testresources
           python3 -m pip install NikGapps
+          sudo apt update ; sudo apt install aapt -y
           mkdir NikGappsProject
 
       - name: Update Git configs
