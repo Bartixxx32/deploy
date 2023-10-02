@@ -24,11 +24,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
         
-      - name: Setup Python
-        uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
-          cache: 'pip'
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install wheel setuptools testresource
+      - run: pip install NikGapps
         
       - name: Environment Details and clean up
         run: |
@@ -41,8 +42,6 @@ jobs:
 
       - name: Installing Requirements
         run: |
-          python3 -m pip install wheel setuptools testresources
-          python3 -m pip install NikGapps
           mkdir NikGappsProject
 
       - name: Update Git configs
