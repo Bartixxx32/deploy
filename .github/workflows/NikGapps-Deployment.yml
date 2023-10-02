@@ -9,7 +9,7 @@ env:
 
 jobs:
   setup:
-    runs-on: macos-latest
+    runs-on: linux-latest
 
     steps:
       - name: Checkout
@@ -45,7 +45,7 @@ jobs:
           path: $HOME/workspace.tar.gz
 
   build:
-    runs-on: macos-latest
+    runs-on: linux-latest
 
     needs: setup
 
