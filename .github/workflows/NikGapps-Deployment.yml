@@ -5,7 +5,7 @@ on:
 
 env:
   RELEASE_TYPE: 'stable'
-  PACKAGE_LIST: core,basic,omni,stock,full,go,addonsets,addons,debloater
+  PACKAGE_LIST: core
 
 jobs:
   build:
