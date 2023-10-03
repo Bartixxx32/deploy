@@ -1,4 +1,0 @@
-wheel
-setuptools
-testresources
-NikGapps
